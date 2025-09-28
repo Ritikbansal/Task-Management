@@ -4,6 +4,7 @@ export default function AppSidebar() {
       <div className="p-4 border-b border-sidebar-border">
         <h1 className="text-lg font-semibold text-balance">Task Manager</h1>
         <p className="text-sm text-muted-foreground">Curate tasks</p>
+        
       </div>
       <nav className="p-2">
         <ul className="flex flex-col gap-1">

@@ -3,7 +3,7 @@ import AppShell from "@/components/app-shell";
 import { useAuthGuard } from "@/components/auth-guard";
 import { getUser } from "@/lib/utils";
 import { User } from "@prisma/client";
-import { Link } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function UsersPage() {
@@ -13,6 +13,7 @@ export default function UsersPage() {
   const [currentPage, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(100);
   const [limit, setLimit] = useState<number>(10);
+  const router = useRouter()
   useAuthGuard();
 
   useEffect(() => {
@@ -36,21 +37,43 @@ export default function UsersPage() {
   const currentUser = getUser();
 
 const action =
-  currentUser?.role === "Owner" ? (
+  currentUser?.role === "Owner" ? (<>
     <a
       href="/users/new"
       className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-primary-foreground text-sm hover:opacity-90"
     >
       Create User
     </a>
-  ) : (
+    <button
+            onClick={() => {
+              localStorage.removeItem("token");
+              sessionStorage.removeItem("token");
+
+              router.push("/login");
+            }}
+            className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-primary-foreground text-sm hover:opacity-90"
+          >
+            Logout
+          </button></>
+  ) : ( <>
     <button
       disabled
       aria-disabled="true"
       className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-primary-foreground text-sm opacity-30 cursor-not-allowed"
     >
       Create User
-    </button>
+      </button>
+      <button
+            onClick={() => {
+              localStorage.removeItem("token");
+              sessionStorage.removeItem("token");
+
+              router.push("/login");
+            }}
+            className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-primary-foreground text-sm hover:opacity-90"
+          >
+            Logout
+          </button></>
   )
 
   return (
@@ -140,7 +163,7 @@ const action =
                 {loading ? "Loading..." : "Previous"}
               </button>
               <button className="rounded-md px-3 py-1" disabled>
-                Page: {currentPage}
+                Page {currentPage} of {Math.ceil(totalPages) || 1}
               </button>
               {/* <ul className="flex items-center gap-1">
               <li>
