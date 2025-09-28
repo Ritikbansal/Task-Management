@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -19,15 +21,17 @@ export async function POST() {
       });
 
       if (!existing) {
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
         const user = await prisma.user.create({
-          data: userData,
+          data: { ...userData, password: hashedPassword },
         });
         createdUsers.push(user);
       }
     }
 
     return NextResponse.json(
-      { message: "Default users seeded", createdUsers },
+      { message: "Default users seeded with hashed passwords", createdUsers },
       { status: 201 }
     );
   } catch (err) {
@@ -38,3 +42,4 @@ export async function POST() {
     );
   }
 }
+

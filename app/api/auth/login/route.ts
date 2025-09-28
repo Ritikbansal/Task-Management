@@ -1,9 +1,9 @@
+export const dynamic = "force-dynamic";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
-
 export async function POST(req: Request) {
   const { email, password } = await req.json();
   console.log('password', password)
