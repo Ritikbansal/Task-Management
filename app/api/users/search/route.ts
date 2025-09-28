@@ -26,7 +26,7 @@ export async function GET(req: Request) {
       ],
     },
     orderBy: {
-      modifiedAt: "asc",
+      modifiedAt: "desc",
     },
     skip: skip,
     take: limit,

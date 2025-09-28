@@ -93,7 +93,10 @@ const action =
                 id="user-search"
                 placeholder="Search by name or email"
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setPage(1)
+                  setQuery(e.target.value)
+                }}
               />
             </div>
             <div className="text-xs text-muted-foreground">

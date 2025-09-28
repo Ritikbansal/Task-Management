@@ -31,7 +31,7 @@ export default function TasksPage() {
     }
   };
   const handleDelete = async (taskId: number) => {
-    if (user?.role !== "Owner") {
+    if (user?.role === "User") {
       alert("Only Owner and Admin can delete tasks!!");
       return;
     }
@@ -42,6 +42,7 @@ export default function TasksPage() {
       if (!res.ok) throw new Error("Failed to delete task");
 
       setCurrentPage(1);
+      fetchTasks()
       alert("Task deleted successfully");
     } catch (err) {
       console.error(err);

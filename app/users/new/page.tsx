@@ -30,9 +30,10 @@ export default function NewUserPage() {
     })
     if (res.ok) {
       alert('User Created')
+      router.push('/users')
     }
     else {
-      alert('User creation failed')
+      alert('User creation failed. Either Email Already Exist or some other error occured!')
     }
     setLoading(false)
   }
