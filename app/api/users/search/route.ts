@@ -5,11 +5,9 @@ const prisma = new PrismaClient();
 export async function GET(req: Request) {
   const url = req.url;
   const { searchParams } = new URL(url);
-  console.log("searchParams", searchParams.get("q"));
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "10");
   const skip = (page - 1) * limit;
-  console.log('skip', skip)
   const users = await prisma.user.findMany({
     where: {
       OR: [

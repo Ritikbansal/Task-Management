@@ -6,8 +6,6 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 export async function POST(req: Request) {
   const { email, password } = await req.json();
-  console.log('password', password)
-  console.log('email', email)
   const user = await prisma.user.findFirst({
     where: {
       email: email,
@@ -16,8 +14,6 @@ export async function POST(req: Request) {
   if (!user) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
-  console.log('password', password)
-  console.log('user.password', user.password)
   const valid = bcrypt.compare(password, user.password);
   if (!valid) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
@@ -32,5 +28,11 @@ export async function POST(req: Request) {
     "JWT_SECRET",
     { expiresIn: "1h" }
   );
-    return NextResponse.json({ token })
+  const response = NextResponse.json({ token })
+  response.cookies.set("token", user.id.toString(), {
+    httpOnly: true,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+  });
+  return response;
 }

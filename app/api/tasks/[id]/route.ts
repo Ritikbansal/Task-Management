@@ -1,35 +1,56 @@
-export const dynamic = "force-dynamic";
+import { getCurrentUser } from "@/lib/utils";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
+
 const prisma = new PrismaClient();
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+
+export const dynamic = "force-dynamic";
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const user = await getCurrentUser(req as any);
+  console.log('user', user)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const task = await prisma.task.findUnique({
     where: { id: Number(params.id) },
-  })
-  return NextResponse.json(task)
+  });
+  console.log('task', task)
+
+  return NextResponse.json(task);
 }
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const data = await req.json()
+  const user = await getCurrentUser(req as any);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const data = await req.json();
+
+  if (user.role === "User" && Number(data.assignee) !== user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const updated = await prisma.task.update({
     where: { id: Number(params.id) },
-      data: {
-          ...data, assignee: {
-          connect: {
-            id: parseInt(data.assignee),
-          },
-        },
-      },
-  })
-  return NextResponse.json(updated)
+    data: {
+      ...data,
+      assignee: { connect: { id: parseInt(data.assignee) } },
+    },
+  });
+
+  return NextResponse.json(updated);
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    console.log('params', params)
-  const updated = await prisma.task.delete({
-    where: {
-      id: parseInt(params.id),
-    },
+  const user = await getCurrentUser(req as any);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (user.role === "User") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const deleted = await prisma.task.delete({
+    where: { id: parseInt(params.id) },
   });
-  return NextResponse.json(updated);
+
+  return NextResponse.json(deleted);
 }

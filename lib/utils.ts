@@ -1,3 +1,5 @@
+import { NextRequest } from "next/server";
+import { PrismaClient } from "@prisma/client";
 import { clsx, type ClassValue } from 'clsx'
 import {jwtDecode} from "jwt-decode"
 import { twMerge } from 'tailwind-merge'
@@ -27,4 +29,14 @@ export function getUser() {
     console.error("Invalid token", e)
     return null
   }
+}
+
+const prisma = new PrismaClient();
+
+export async function getCurrentUser(req: NextRequest) {
+  const token = req.cookies.get("token")?.value;
+  if (!token) return null;
+
+  const user = await prisma.user.findUnique({ where: { id: parseInt(token) } });
+  return user;
 }

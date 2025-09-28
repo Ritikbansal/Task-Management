@@ -15,14 +15,12 @@ export default function NewUserPage() {
     e.preventDefault()
     setLoading(true)
     const formData = new FormData(e.currentTarget)
-    console.log('formData', formData)
     const payload = {
       name: formData.get('name'),
       email: formData.get('email'),
       role: formData.get('role'),
       password: formData.get('password')
     }
-    console.log('payload', payload)
     const res = await fetch('/api/users', {
       body: JSON.stringify(payload),
       method: 'POST',
