@@ -109,7 +109,7 @@ export default function LoginForm({ redirectTo = "/tasks" }: { redirectTo?: stri
             </div>
           ) : null}
 
-          <Button type="submit" className="w-full" disabled={loading} aria-busy={loading}>
+          <Button type="submit" className="w-full cursor-pointer" disabled={loading} aria-busy={loading}>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
 
